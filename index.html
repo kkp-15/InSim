@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インデックス投資積立シミュレーション</title>
+</head>
+<body>
+    <h1>インデックス投資積立シミュレーション</h1>
+    
+    <label>初期投資額（円）: <input type="number" id="initial" value="100000"></label><br>
+    <label>毎月の積立額（円）: <input type="number" id="monthly" value="30000"></label><br>
+    <label>想定リターン（年率 %）: <input type="number" id="returnRate" value="5"></label><br>
+    <label>積立期間（年）: <input type="number" id="years" value="20"></label><br>
+    <button onclick="simulate()">計算</button>
+
+    <h2>結果</h2>
+    <p id="result"></p>
+
+    <script>
+        function simulate() {
+            let initial = parseFloat(document.getElementById("initial").value);
+            let monthly = parseFloat(document.getElementById("monthly").value);
+            let rate = parseFloat(document.getElementById("returnRate").value) / 100 / 12;
+            let years = parseInt(document.getElementById("years").value);
+            let months = years * 12;
+            let total = initial;
+
+            for (let i = 0; i < months; i++) {
+                total = total * (1 + rate) + monthly;
+            }
+
+            document.getElementById("result").innerHTML = `最終資産額: ${Math.round(total).toLocaleString()} 円`;
+        }
+    </script>
+</body>
+</html>
