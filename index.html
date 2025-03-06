@@ -34,15 +34,22 @@
 
     <script>
         function simulate() {
-            let initial = parseFloat(document.getElementById("initial").value);
-            let monthly = parseFloat(document.getElementById("monthly").value);
-            let rate = parseFloat(document.getElementById("returnRate").value) / 100;
-            let years = parseInt(document.getElementById("years").value);
-            
+            let initial = parseFloat(document.getElementById("initial").value) || 0;
+            let monthly = parseFloat(document.getElementById("monthly").value) || 0;
+            let rate = (parseFloat(document.getElementById("returnRate").value) || 0) / 100;
+            let years = parseInt(document.getElementById("years").value) || 0;
+
+            if (years <= 0) {
+                alert("積立期間は1年以上にしてください");
+                return;
+            }
+
             let total = initial;
             let labels = [];
             let data = [];
             let tableBody = document.getElementById("tableBody");
+
+            // テーブルをクリア
             tableBody.innerHTML = "";
 
             for (let i = 1; i <= years; i++) {
@@ -50,8 +57,17 @@
                 labels.push(i + "年");
                 data.push(Math.round(total));
 
-                let row = `<tr><td>${i}</td><td>${Math.round(total).toLocaleString()}</td></tr>`;
-                tableBody.innerHTML += row;
+                // 新しい行を作成
+                let row = document.createElement("tr");
+                let yearCell = document.createElement("td");
+                let totalCell = document.createElement("td");
+
+                yearCell.textContent = i;
+                totalCell.textContent = Math.round(total).toLocaleString();
+
+                row.appendChild(yearCell);
+                row.appendChild(totalCell);
+                tableBody.appendChild(row);
             }
 
             document.getElementById("result").innerHTML = `最終資産額: ${Math.round(total).toLocaleString()} 円`;
