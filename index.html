@@ -33,6 +33,8 @@
     </table>
 
     <script>
+        let myChart = null;
+
         function simulate() {
             let initial = parseFloat(document.getElementById("initial").value) || 0;
             let monthly = parseFloat(document.getElementById("monthly").value) || 0;
@@ -48,16 +50,20 @@
             let labels = [];
             let data = [];
             let tableBody = document.getElementById("tableBody");
-
-            // テーブルをクリア
-            tableBody.innerHTML = "";
+            tableBody.innerHTML = ""; // テーブルのクリア
 
             for (let i = 1; i <= years; i++) {
                 total = total * (1 + rate) + (monthly * 12);
-                labels.push(i + "年");
                 data.push(Math.round(total));
 
-                // 新しい行を作成
+                // X軸のラベルを5年ごとに表示（処理負荷軽減）
+                if (i % 5 === 0 || i === 1 || i === years) {
+                    labels.push(i + "年");
+                } else {
+                    labels.push(""); // ラベルを間引く
+                }
+
+                // 表を作成
                 let row = document.createElement("tr");
                 let yearCell = document.createElement("td");
                 let totalCell = document.createElement("td");
@@ -73,25 +79,31 @@
             document.getElementById("result").innerHTML = `最終資産額: ${Math.round(total).toLocaleString()} 円`;
 
             let ctx = document.getElementById("chart").getContext("2d");
-            if (window.myChart) {
-                window.myChart.destroy();
+
+            if (myChart) {
+                // 既存のグラフがある場合はデータのみ更新
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = data;
+                myChart.update(); // 既存グラフを更新
+            } else {
+                // 初回のみ新規作成
+                myChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "資産額",
+                            data: data,
+                            borderColor: "blue",
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
             }
-            window.myChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "資産額",
-                        data: data,
-                        borderColor: "blue",
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
         }
     </script>
 </body>
