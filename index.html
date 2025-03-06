@@ -19,7 +19,9 @@
     <p id="result"></p>
 
     <h2>資産推移グラフ</h2>
-    <canvas id="chart"></canvas>
+    <div style="width: 100%; max-width: 600px;">
+        <canvas id="chart"></canvas>
+    </div>
 
     <h2>年ごとの資産推移</h2>
     <table border="1">
@@ -81,29 +83,26 @@
             let ctx = document.getElementById("chart").getContext("2d");
 
             if (myChart) {
-                // 既存のグラフがある場合はデータのみ更新
-                myChart.data.labels = labels;
-                myChart.data.datasets[0].data = data;
-                myChart.update(); // 既存グラフを更新
-            } else {
-                // 初回のみ新規作成
-                myChart = new Chart(ctx, {
-                    type: "line",
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "資産額",
-                            data: data,
-                            borderColor: "blue",
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
+                myChart.destroy(); // 既存グラフを削除（重要！）
             }
+
+            // 新しいグラフを作成
+            myChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "資産額",
+                        data: data,
+                        borderColor: "blue",
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
         }
     </script>
 </body>
